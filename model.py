@@ -35,7 +35,7 @@ def generator(samples, batch_size=32):
 
 
                 center_angle = float(batch_sample[3])
-                correction = 0.2
+                correction = 0.3
                 left_angle = center_angle + correction
                 right_angle = center_angle - correction
                 angles.append(center_angle)
@@ -87,5 +87,5 @@ model.fit_generator(train_generator, samples_per_epoch = len(train_samples),
                     nb_val_samples = len(validation_samples), nb_epoch = 7)
 
 # save the model
-model.save('model.h52')
+model.save('model.h5')
 
