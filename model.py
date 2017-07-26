@@ -11,7 +11,7 @@ with open("./data/driving_log.csv") as csvfile:
         samples.append(line)
 
 # remove the title line
-samples = samples[1:]
+samples = samples[1:5]
 
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
@@ -51,7 +51,7 @@ train_generator = generator(train_samples, batch_size=32)
 validation_generator = generator(validation_samples, batch_size=32)
 
 from keras.models import Sequential, Model
-from keras.layers.core import Dense, Activation, Flatten, Lambda
+from keras.layers.core import Dense, Activation, Flatten, Lambda, Dropout
 from keras.layers import Cropping2D
 
 from keras.layers.convolutional import Convolution2D
@@ -63,7 +63,7 @@ from keras.layers.pooling import MaxPooling2D
 model = Sequential()
 
 # data preprocessing
-model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
+model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3))) # layer 0
 # cropping
 model.add(Cropping2D(cropping=((70,25), (0,0))))
 
@@ -73,7 +73,9 @@ model.add(Convolution2D(48,5,5, subsample=(2,2), activation="relu"))
 model.add(Convolution2D(64,3,3, activation="relu"))
 model.add(Convolution2D(64,3,3, activation="relu"))
 
-model.add(Flatten())
+model.add(Dropout(0.5))
+
+model.add(Flatten()) # layer 8
 model.add(Dense(100))
 model.add(Dense(50))
 model.add(Dense(10))
@@ -82,6 +84,8 @@ model.add(Dense(1))
 # run the network
 model.compile(loss="mse", optimizer="adam")
 #model.fit(X_train, y_train, shuffle=True, validation_split=0.2, nb_epoch=7)
+
+# every epoch deal samples_per_epoch; each forward/backward deal 32 samples
 model.fit_generator(train_generator, samples_per_epoch = len(train_samples),
                     validation_data = validation_generator,
                     nb_val_samples = len(validation_samples), nb_epoch = 7)
@@ -89,3 +93,10 @@ model.fit_generator(train_generator, samples_per_epoch = len(train_samples),
 # save the model
 model.save('model.h5')
 
+
+# from keras import backend
+# get_output = backend.function([model.layers[0].input, backend.learning_phase()], # keras.backend.learning_phase() needed if had a dropout
+#                                   [model.layers[7].output])
+# x =  np.array([cv2.imread("./data/IMG/center_2016_12_01_13_31_13_177.jpg")])
+# output = get_output([x, 0])[0]
+# print(output.shape)
