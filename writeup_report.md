@@ -58,7 +58,7 @@ I start from the nvidia pipeline which was mentioned in the lesson, refer [here]
 
 The data is normalized in the model using a Keras lambda layer (code line 18). 
 ####2. Attempts to reduce overfitting in the model
-The nvidia model doesn't contain a dropout layer(why?), so I add a dropout layer into it to prevent overfitting.
+The nvidia model doesn't contain a dropout layer(why?), so I add a dropout layer into it to prevent overfitting, but I found it didn't work as well as the origin pipeline(with dropout layer)...I will keep working on it to see why.
 
 The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 19). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 

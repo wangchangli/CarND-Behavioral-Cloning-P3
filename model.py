@@ -11,7 +11,7 @@ with open("./data/driving_log.csv") as csvfile:
         samples.append(line)
 
 # remove the title line
-samples = samples[1:5]
+samples = samples[1:]
 
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
